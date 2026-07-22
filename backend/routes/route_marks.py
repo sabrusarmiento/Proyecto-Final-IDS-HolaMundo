@@ -18,7 +18,7 @@ def get_marks():
         "id_alumno": request.args.get('id_alumno'),
         "id_evaluacion": request.args.get('id_evaluacion'),
         "id_equipo": request.args.get('id_equipo'),
-        "id_corrector": request.args.get('id_corrector'),
+        "corrector_nombre": request.args.get('corrector_nombre'),
         "nota": request.args.get('nota')
     }
     return marks_service(filters)

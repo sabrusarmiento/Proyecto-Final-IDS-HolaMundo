@@ -12,6 +12,7 @@ from helpers.constants import NIVEL_AYUDANTE
 attendance_bp = Blueprint('attendance', __name__)
 
 @attendance_bp.route("/asistencia", methods=["GET"])
+@require_auth
 def get_attendance():
     id_clase = request.args.get("id_clase")
     id_alumno = request.args.get("id_alumno")

@@ -1448,10 +1448,10 @@ paths:
             type: integer
           description: Filtrar por ID de equipo
         - in: query
-          name: id_corrector
+          name: corrector_nombre
           schema:
-            type: integer
-          description: Filtrar por ID de corrector
+            type: string
+          description: Filtrar por nombre del corrector
         - in: query
           name: nota
           schema:
@@ -3947,10 +3947,10 @@ components:
           type: integer
           nullable: true
           example: 3
-        id_corrector:
-          type: integer
+        corrector_nombre:
+          type: string
           nullable: true
-          example: 10
+          example: Bruno
 
     MarkPatch:
       type: object
@@ -3969,9 +3969,9 @@ components:
           type: number
           format: float
           example: 9.0
-        id_corrector:
-          type: integer
-          example: 10
+        corrector_nombre:
+          type: string
+          example: Bruno
 
     Material:
       type: object
