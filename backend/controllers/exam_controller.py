@@ -119,6 +119,23 @@ def create_exam(data):
                 "description": "No se pudo determinar el usuario que crea la evaluacion"
                 }
 
+        ya_existe = query_db(
+            """
+            SELECT e.id_evaluacion
+            FROM evaluaciones e
+            JOIN tipos_evaluacion t ON e.id_tipo = t.id_tipo
+            WHERE e.id_curso = %s AND t.nombre = %s
+            """,
+            (id_curso, nombre)
+        )
+        if ya_existe:
+            return {
+                "ok": False,
+                "code": 409,
+                "message": "Conflict",
+                "description": f"Ya existe una evaluación llamada '{nombre}' en este curso"
+            }
+
         sql = """
             INSERT INTO evaluaciones (id_tipo, id_usuario, fecha, id_curso, asociacion)
             VALUES (%s, %s, %s, %s, %s)

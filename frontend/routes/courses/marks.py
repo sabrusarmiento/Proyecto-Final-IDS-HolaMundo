@@ -56,24 +56,26 @@ def guardar_notas(course_id):
 
 @courses_bp.route('/cursos/<int:course_id>/evaluaciones/crear', methods=['POST'])
 def crear_evaluacion(course_id):
-    user=get_user()
+    user = get_user()
     token = get_token()
     if not token:
         return redirect(url_for('landing.landing') + '?error=Debes iniciar sesión')
     nombre     = request.form.get('nombre_eval')
     asociacion = request.form.get('asociacion', 'Individual')
-    requests.post(
+    resp = requests.post(
         f'{BACKEND_URL}/evaluaciones',
         json={'id_curso': course_id, 'id_tipo': 1, 'nombre': nombre, 'asociacion': asociacion},
         headers=auth_headers()
     )
+    if resp.status_code == 409:
+        flash(f"Ya existe una evaluación llamada '{nombre}' en este curso", 'error')
     log_action(
-            method='POST',
-            description=f'Se creo una nueva evaluación {nombre} en el curso {course_id}',
-            user_id=user.get('id_usuario', 'desconocido'),
-            user_email=user.get('correo', 'desconocido'),
-            status_code=200
-        )
+        method='POST',
+        description=f'Se creo una nueva evaluación {nombre} en el curso {course_id}',
+        user_id=user.get('id_usuario', 'desconocido'),
+        user_email=user.get('correo', 'desconocido'),
+        status_code=resp.status_code
+    )
     session.pop('eval_seleccionada', None)
     return redirect(url_for('courses.course_detail', course_id=course_id, tab='marks'))
 
@@ -184,11 +186,17 @@ def asociar_nota_grupal(course_id):
 
         try:
             team_res  = requests.get(f'{BACKEND_URL}/equipos/{id_equipo}', headers=headers)
+            if not team_res.ok:
+                print(f"Error equipo {id_equipo}: {team_res.status_code} {team_res.text[:200]}")
+                continue
             team_json = team_res.json()
             team_data = team_json.get('team') or {}
             alumnos = team_data.get('alumnos', [])
+            if not alumnos:
+                print(f"Equipo {id_equipo} sin alumnos, salteando")
+                continue
         except Exception as e:
-            print(f"  Error obteniendo equipo {id_equipo}: {e}")
+            print(f"Error obteniendo equipo {id_equipo}: {e}")
             continue
 
         for alumno in alumnos:

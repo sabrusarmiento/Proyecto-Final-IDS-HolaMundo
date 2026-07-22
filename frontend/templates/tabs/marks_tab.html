@@ -214,7 +214,7 @@
                   {% for s in students %}
                     {% if s.estado_alumno and s.equipo and s.equipo not in equipos_vistos %}
                       {% set _ = equipos_vistos.append(s.equipo) %}
-                      <option value="{{ s.equipo }}">{{ s.equipo }}</option>
+                      <option value="{{ s.equipo | trim | lower }}">{{ s.equipo }}</option>
                     {% endif %}
                   {% endfor %}
                   <option value="sin-equipo">Sin equipo</option>
@@ -487,7 +487,7 @@
               {% if s.estado_alumno %}
               {% set correctores_csv = s.correctores_todas.values() | list | join(',') | lower %}
               <tr class="planilla-body-row"
-                  data-equipo="{{ (s.equipo or '') | lower }}"
+                  data-equipo="{{ (s.equipo or '') | trim | lower }}"
                   data-correctores="{{ correctores_csv }}"
                   data-notas='{{ s.notas_json | tojson }}'
                   data-estado=""
