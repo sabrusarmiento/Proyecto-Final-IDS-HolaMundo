@@ -1,26 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggleSwitch = document.querySelector('#checkbox');
-    const currentTheme = localStorage.getItem('theme');
+    if (!toggleSwitch) return;
 
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme',currentTheme);
-        if (currentTheme==='dark'){
-            if (toggleSwitch) toggleSwitch.checked = true;
-        }
+    toggleSwitch.checked = localStorage.getItem('theme') === 'dark';
 
-    }
-    if (toggleSwitch) {
-        toggleSwitch.addEventListener('change', (e) => {
-            if (e.target.checked){
-                document.documentElement.setAttribute('data-theme','dark');
-                localStorage.setItem('theme', 'dark');
-            }
-            else {
-                document.documentElement.setAttribute('data-theme','light');
-                localStorage.setItem('theme', 'light');
-            }
-            window.dispatchEvent(new Event("themeChanged"));
-            
-        });
-    }
+    toggleSwitch.addEventListener('change', (e) => {
+        const theme = e.target.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        window.dispatchEvent(new Event('themeChanged'));
+    });
 });
